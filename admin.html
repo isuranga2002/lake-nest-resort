@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Lake Nest Resort</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 100px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            margin-top: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.logout {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            margin-top: 30px;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #666;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .header h1 {
+            margin: 0;
+            text-align: left;
+        }
+
+        .user-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-container,
+            .login-container {
+                padding: 20px;
+                margin: 20px auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Form -->
+    <div class="login-container" id="login-container">
+        <h1>🔐 Admin Login</h1>
+        <p class="subtitle">Lake Nest Resort</p>
+        
+        <div id="login-message" class="message"></div>
+        
+        <form id="login-form">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter admin password" required>
+            </div>
+            <button type="submit" class="button">Login</button>
+        </form>
+    </div>
+
+    <!-- Admin Panel -->
+    <div class="admin-container" id="admin-container">
+        <div class="header">
+            <div>
+                <h1>⚙️ Admin Panel</h1>
+                <div class="user-info">Lake Nest Resort Management</div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>Instructions</h3>
+            <p>Update the information below and click "Save Changes" to automatically update your website. Changes will be reflected on the live site within 30-60 seconds.</p>
+        </div>
+
+        <div id="admin-message" class="message"></div>
+
+        <form id="admin-form">
+            <!-- Basic Information -->
+            <h2>Basic Information</h2>
+            <div class="form-group">
+                <label for="villaName">Villa Name</label>
+                <input type="text" id="villaName" name="villaName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+
+            <!-- Contact Information -->
+            <h2>Contact Information</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="phone1">Phone Number 1</label>
+                    <input type="text" id="phone1" name="phone1" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone2">Phone Number 2</label>
+                    <input type="text" id="phone2" name="phone2" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Physical Address</label>
+                <textarea id="address" name="address" required></textarea>
+            </div>
+
+            <!-- Social Links -->
+            <h2>Social Media & Maps</h2>
+            <div class="form-group">
+                <label for="facebook">Facebook Page URL</label>
+                <input type="text" id="facebook" name="facebook" placeholder="https://facebook.com/...">
+            </div>
+
+            <div class="form-group">
+                <label for="whatsapp">WhatsApp Link</label>
+                <input type="text" id="whatsapp" name="whatsapp" placeholder="https://wa.me/94770084884">
+            </div>
+
+            <div class="form-group">
+                <label for="googleMap">Google Maps Embed Link</label>
+                <input type="text" id="googleMap" name="googleMap" placeholder="https://www.google.com/maps/embed?pb=...">
+            </div>
+
+            <!-- Room Information -->
+            <h2>Room Information</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label for="numberOfRooms">Number of Rooms</label>
+                    <input type="text" id="numberOfRooms" name="numberOfRooms" placeholder="3" value="3">
+                </div>
+                <div class="form-group">
+                    <label for="roomCapacity">Room Capacity</label>
+                    <input type="text" id="roomCapacity" name="roomCapacity" placeholder="3 persons per room" value="3 persons per room">
+                </div>
+            </div>
+
+            <!-- Package Pricing -->
+            <h2>Package Pricing</h2>
+            <div class="form-group">
+                <label for="package6h">6 Hour Package (Short Time)</label>
+                <input type="text" id="package6h" name="package6h" placeholder="3500 Rs (Short time with AC - 6 hours)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="package12h">12 Hour Package (Full Night/Day)</label>
+                <input type="text" id="package12h" name="package12h" placeholder="5000 Rs (Full night/day with AC - 12 hours)" required>
+            </div>
+
+            <div class="form-group">
+                <label for="package24h">24 Hour Package (Full Day)</label>
+                <input type="text" id="package24h" name="package24h" placeholder="8000 Rs (Full day with AC - 24 hours)" required>
+            </div>
+
+            <!-- Marketing Codes -->
+            <h2>Marketing Codes (Optional)</h2>
+            <div class="form-group">
+                <label for="facebookPixel">Facebook Pixel Code</label>
+                <textarea id="facebookPixel" name="facebookPixel" placeholder="Paste your Facebook Pixel code here"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="googleAds">Google Ads Code</label>
+                <textarea id="googleAds" name="googleAds" placeholder="Paste your Google Ads code here"></textarea>
+            </div>
+
+            <!-- Action Buttons -->
+            <button type="submit" class="button">💾 Save Changes</button>
+            <button type="button" class="button logout" id="logout-btn">🚪 Logout</button>
+        </form>
+    </div>
+
+    <script src="js/admin.js"></script>
+</body>
+</html>
