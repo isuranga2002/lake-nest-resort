@@ -2,7 +2,7 @@
 const ADMIN_PASSWORD = "Admin@12345"; // Change this before deployment!
 
 // GitHub Configuration - IMPORTANT: Add your token here locally (DO NOT commit to public repo)
-const GITHUB_TOKEN = ""; // Paste your GitHub token here (keep private!)
+const GITHUB_TOKEN = "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"; // Paste your GitHub token here (keep private!)
 const GITHUB_USERNAME = "isuranga2002";
 const GITHUB_REPO = "lake-nest-resort";
 const GITHUB_BRANCH = "main";
