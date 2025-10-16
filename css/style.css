@@ -33,7 +33,7 @@ body {
     padding: 0 40px;
 }
 
-/* Header - Transparent with Glass Effect - SMALLER */
+/* Header */
 .header {
     position: fixed;
     top: 0;
@@ -193,7 +193,7 @@ body {
     color: var(--accent-color);
 }
 
-/* Hero Section - Clean, No Text */
+/* Hero Section */
 .hero {
     position: relative;
     height: 100vh;
@@ -221,7 +221,7 @@ body {
     object-fit: cover;
 }
 
-/* Booking Widget - Full Glass Effect */
+/* Booking Widget */
 .hero-booking-widget {
     position: absolute;
     bottom: 50px;
@@ -421,7 +421,7 @@ body {
     font-weight: 700;
 }
 
-/* Amenities Section - Glass Background */
+/* Amenities Section */
 .amenities-section {
     padding: 120px 0;
     background-image: url('../assets/room2.jpg');
@@ -520,6 +520,38 @@ body {
     font-size: 3.5rem;
     font-weight: 300;
     color: var(--dark-color);
+}
+
+/* Currency Switcher */
+.currency-switcher {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 50px;
+}
+
+.currency-btn {
+    padding: 12px 30px;
+    background: var(--light-color);
+    border: 2px solid var(--light-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: 'Arial', sans-serif;
+    color: var(--gray-color);
+}
+
+.currency-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+}
+
+.currency-btn.active {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    color: var(--white);
 }
 
 .packages-grid {
@@ -642,7 +674,211 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
-/* Gallery Section - Full Screen Images */
+/* Nearby Attractions Section */
+.nearby-section {
+    padding: 120px 0;
+    background: var(--light-color);
+}
+
+.section-header-center {
+    text-align: center;
+    margin-bottom: 70px;
+}
+
+.attractions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+    margin-bottom: 80px;
+}
+
+.attraction-card {
+    background: var(--white);
+    padding: 0;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+    overflow: hidden;
+    position: relative;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.attraction-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.7) 100%);
+    z-index: 1;
+}
+
+.attraction-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.attraction-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Background images for attraction cards */
+.attraction-card:nth-child(2) {
+    background-image: url('../assets/elephant-home-bg.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+.attraction-card:nth-child(3) {
+    background-image: url('../assets/chandrika-lake-bg.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+.attraction-card:nth-child(4) {
+    background-image: url('../assets/sankapala-temple-bg.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+.attraction-card:nth-child(5) {
+    background-image: url('../assets/ridiyagama-bg.webp');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Udawalawe highlight card with background */
+.attraction-card.highlight {
+    background-image: url('../assets/udawalawe-bg.webp');
+    background-size: cover;
+    background-position: center;
+    color: var(--white);
+    grid-column: span 2;
+    min-height: 500px;
+    padding: 60px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.attraction-card.highlight::before {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+}
+
+.attraction-card.highlight .attraction-title,
+.attraction-card.highlight .attraction-description,
+.attraction-card.highlight .attraction-distance {
+    color: var(--white);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Content padding for cards with background images */
+.attraction-card:not(.highlight) {
+    padding: 40px;
+}
+
+.attraction-card:not(.highlight) .attraction-title,
+.attraction-card:not(.highlight) .attraction-description,
+.attraction-card:not(.highlight) .attraction-distance {
+    color: var(--white);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.attraction-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 25px;
+    color: var(--white);
+}
+
+.attraction-title {
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--white);
+}
+
+.attraction-distance {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.attraction-description {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--white);
+    margin-bottom: 20px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+.attraction-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.attraction-features span {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(5px);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--white);
+}
+
+.location-benefits {
+    background: var(--white);
+    padding: 60px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.location-benefits h3 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--dark-color);
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 40px;
+}
+
+.benefit-item h4 {
+    font-size: 1.3rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.benefit-item p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--gray-color);
+}
+
+/* Gallery Section */
 .gallery-section {
     min-height: 100vh;
     position: relative;
@@ -702,6 +938,120 @@ body {
     transform: translateY(-50%) scale(1.1);
 }
 
+/* Reviews Section with Background */
+.reviews-section {
+    padding: 120px 0;
+    background-image: url('../assets/reviews-bg.webp');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    position: relative;
+}
+
+.reviews-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    z-index: 0;
+}
+
+.reviews-section .container-large {
+    position: relative;
+    z-index: 1;
+}
+
+.reviews-container {
+    position: relative;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 80px;
+}
+
+.reviews-slider {
+    position: relative;
+    overflow: hidden;
+}
+
+.review-card {
+    display: none;
+    text-align: center;
+    padding: 60px 40px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 15px;
+    min-height: 300px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.review-card.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.review-rating {
+    margin-bottom: 30px;
+}
+
+.review-rating .star {
+    color: #ffc107;
+    font-size: 1.8rem;
+    margin: 0 3px;
+}
+
+.review-text {
+    font-size: 1.3rem;
+    line-height: 1.9;
+    color: var(--gray-color);
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+.review-author {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.review-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--primary-color);
+    background: var(--white);
+    border-radius: 50%;
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    z-index: 10;
+}
+
+.review-prev {
+    left: 0;
+}
+
+.review-next {
+    right: 0;
+}
+
+.review-arrow:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-50%) scale(1.1);
+}
+
 /* Contact Section */
 .contact-section {
     padding: 120px 0;
@@ -721,6 +1071,8 @@ body {
     justify-content: center;
     gap: 30px;
     margin-bottom: 70px;
+    position: relative;
+    z-index: 10;
 }
 
 .social-circle {
@@ -733,6 +1085,8 @@ body {
     justify-content: center;
     color: var(--secondary-color);
     transition: all 0.3s;
+    position: relative;
+    z-index: 10;
 }
 
 .social-circle:hover {
@@ -743,6 +1097,9 @@ body {
 
 .contact-details {
     margin-bottom: 70px;
+    position: relative;
+    z-index: 1;
+    clear: both;
 }
 
 .contact-info-grid {
@@ -835,6 +1192,10 @@ body {
     .amenities-grid {
         grid-template-columns: repeat(3, 1fr);
     }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 968px) {
@@ -881,6 +1242,14 @@ body {
         gap: 40px;
     }
     
+    .attractions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .attraction-card.highlight {
+        grid-column: span 1;
+    }
+    
     .gallery-arrow {
         width: 55px;
         height: 55px;
@@ -893,6 +1262,10 @@ body {
     
     .gallery-next {
         right: 20px;
+    }
+    
+    .reviews-container {
+        padding: 0 60px;
     }
 }
 
@@ -924,5 +1297,23 @@ body {
     
     .booking-arrow {
         font-size: 1.5rem;
+    }
+    
+    .reviews-container {
+        padding: 0 40px;
+    }
+    
+    .review-text {
+        font-size: 1.1rem;
+    }
+    
+    .attraction-card {
+        min-height: 350px;
+        padding: 30px;
+    }
+    
+    .attraction-card.highlight {
+        min-height: 400px;
+        padding: 40px;
     }
 }

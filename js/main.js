@@ -1,4 +1,10 @@
-// Load configuration from config.json and populate the website
+// Global variables
+let currentCurrency = 'LKR';
+let exchangeRate = 303;
+let currentReviewIndex = 0;
+let reviewInterval;
+
+// Load configuration and initialize
 document.addEventListener('DOMContentLoaded', function() {
     loadConfig();
     initMobileMenu();
@@ -6,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     initHeroVideo();
     initGallerySlider();
     initVideoPlayer();
+    initReviewsSlider();
+    initCurrencySwitcher();
     updateBookingDates();
 });
 
@@ -15,8 +23,11 @@ async function loadConfig() {
         const response = await fetch('config.json');
         const config = await response.json();
         
-        // Update villa name in multiple places
-        const villaNameElements = document.querySelectorAll('#villa-name, #header-name, #footer-name');
+        // Store exchange rate
+        exchangeRate = parseFloat(config.exchangeRate) || 303;
+        
+        // Update villa name
+        const villaNameElements = document.querySelectorAll('#header-villa-name, #footer-name');
         villaNameElements.forEach(element => {
             if (element) element.textContent = config.villaName;
         });
@@ -53,7 +64,7 @@ async function loadConfig() {
             }
         });
         
-        // Update address in multiple places
+        // Update address
         const addressElements = document.querySelectorAll('#address, #address-about');
         addressElements.forEach(element => {
             if (element) {
@@ -62,7 +73,7 @@ async function loadConfig() {
         });
         
         // Update social links
-        const facebookLinks = document.querySelectorAll('#facebook-link, #facebook-header, #facebook-contact');
+        const facebookLinks = document.querySelectorAll('#facebook-header, #facebook-contact');
         facebookLinks.forEach(element => {
             if (element && config.facebook) {
                 element.href = config.facebook;
@@ -70,12 +81,12 @@ async function loadConfig() {
         });
         
         // Update WhatsApp links
-        const whatsappLinks = document.querySelectorAll('#whatsapp-link, #whatsapp-contact, #whatsapp-text');
+        const whatsappLinks = document.querySelectorAll('#whatsapp-contact, #whatsapp-text');
         whatsappLinks.forEach(element => {
             if (element && config.whatsapp) {
                 element.href = config.whatsapp;
                 if (element.id === 'whatsapp-text') {
-                    element.textContent = config.phone1;
+                    element.textContent = '+94 ' + config.phone1;
                 }
             }
         });
@@ -86,21 +97,19 @@ async function loadConfig() {
             mapFrame.src = config.googleMap;
         }
         
-        // Update package prices
-        const price6h = document.getElementById('price-6h');
-        if (price6h) {
-            price6h.textContent = config.package6h;
-        }
-        
-        const price12h = document.getElementById('price-12h');
-        if (price12h) {
-            price12h.textContent = config.package12h;
-        }
-        
-        const price24h = document.getElementById('price-24h');
-        if (price24h) {
-            price24h.textContent = config.package24h;
-        }
+        // Update package prices - store LKR values
+        const priceElements = document.querySelectorAll('[data-price-id]');
+        priceElements.forEach(element => {
+            const priceId = element.getAttribute('data-price-id');
+            let price = 0;
+            
+            if (priceId === '6h') price = config.package6h;
+            if (priceId === '12h') price = config.package12h;
+            if (priceId === '24h') price = config.package24h;
+            
+            element.setAttribute('data-price-lkr', price);
+            element.textContent = formatPrice(price, 'LKR');
+        });
         
         // Update room count
         const roomCount = document.getElementById('room-count');
@@ -123,7 +132,44 @@ async function loadConfig() {
     }
 }
 
-// Initialize mobile menu toggle
+// Currency Switcher
+function initCurrencySwitcher() {
+    const currencyButtons = document.querySelectorAll('.currency-btn');
+    
+    currencyButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const currency = this.getAttribute('data-currency');
+            
+            // Update active button
+            currencyButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update currency
+            currentCurrency = currency;
+            updateAllPrices();
+        });
+    });
+}
+
+function updateAllPrices() {
+    const priceElements = document.querySelectorAll('[data-price-lkr]');
+    
+    priceElements.forEach(element => {
+        const priceLKR = parseFloat(element.getAttribute('data-price-lkr'));
+        element.textContent = formatPrice(priceLKR, currentCurrency);
+    });
+}
+
+function formatPrice(priceLKR, currency) {
+    if (currency === 'USD') {
+        const priceUSD = (priceLKR / exchangeRate).toFixed(2);
+        return '$' + priceUSD + ' USD';
+    } else {
+        return priceLKR.toLocaleString() + ' LKR';
+    }
+}
+
+// Mobile menu toggle
 function initMobileMenu() {
     const menuToggle = document.getElementById('menu-toggle');
     const navOverlay = document.getElementById('nav-overlay');
@@ -161,7 +207,7 @@ function initMobileMenu() {
     }
 }
 
-// Initialize scroll effects for header
+// Scroll effects
 function initScrollEffects() {
     const header = document.querySelector('.header');
     
@@ -191,7 +237,7 @@ function initScrollEffects() {
     }, observerOptions);
     
     // Observe elements for animation
-    const animatedElements = document.querySelectorAll('.amenity-item, .package-card, .about-content');
+    const animatedElements = document.querySelectorAll('.amenity-item, .package-card, .about-content, .attraction-card');
     animatedElements.forEach(element => {
         element.style.opacity = '0';
         element.style.transform = 'translateY(40px)';
@@ -200,7 +246,7 @@ function initScrollEffects() {
     });
 }
 
-// Initialize hero video controls
+// Hero video controls
 function initHeroVideo() {
     const heroVideo = document.querySelector('.hero-media');
     const pauseBtn = document.getElementById('hero-pause');
@@ -221,7 +267,7 @@ function initHeroVideo() {
     }
 }
 
-// Initialize gallery slider
+// Gallery slider
 function initGallerySlider() {
     const galleryImages = [
         'assets/room1.jpg',
@@ -265,12 +311,70 @@ function initGallerySlider() {
             updateGalleryImage();
         }, 5000);
         
-        // Add transition effect to gallery image
+        // Add transition effect
         galleryImage.style.transition = 'opacity 0.3s ease';
     }
 }
 
-// Initialize video player in about section
+// Reviews slider with auto-rotation
+function initReviewsSlider() {
+    const reviewCards = document.querySelectorAll('.review-card');
+    const reviewPrev = document.querySelector('.review-prev');
+    const reviewNext = document.querySelector('.review-next');
+    
+    if (reviewCards.length === 0) return;
+    
+    function showReview(index) {
+        reviewCards.forEach((card, i) => {
+            card.classList.remove('active');
+            if (i === index) {
+                card.classList.add('active');
+            }
+        });
+    }
+    
+    function nextReview() {
+        currentReviewIndex = (currentReviewIndex + 1) % reviewCards.length;
+        showReview(currentReviewIndex);
+    }
+    
+    function prevReview() {
+        currentReviewIndex = (currentReviewIndex - 1 + reviewCards.length) % reviewCards.length;
+        showReview(currentReviewIndex);
+    }
+    
+    // Navigation buttons
+    if (reviewNext) {
+        reviewNext.addEventListener('click', function() {
+            nextReview();
+            resetReviewInterval();
+        });
+    }
+    
+    if (reviewPrev) {
+        reviewPrev.addEventListener('click', function() {
+            prevReview();
+            resetReviewInterval();
+        });
+    }
+    
+    // Auto-rotation every 5 seconds
+    function startReviewInterval() {
+        reviewInterval = setInterval(nextReview, 5000);
+    }
+    
+    function resetReviewInterval() {
+        clearInterval(reviewInterval);
+        startReviewInterval();
+    }
+    
+    startReviewInterval();
+    
+    // Show first review
+    showReview(0);
+}
+
+// Video player in about section
 function initVideoPlayer() {
     const videoPlayBtn = document.querySelector('.video-play-btn');
     const aboutVideo = document.querySelector('.about-video');
@@ -380,7 +484,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
     });
 });
 
-// Add page loading animation
+// Page loading animation
 window.addEventListener('load', function() {
     document.body.style.opacity = '0';
     setTimeout(function() {

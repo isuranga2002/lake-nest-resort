@@ -96,6 +96,9 @@ async function loadConfigData() {
         document.getElementById('package6h').value = config.package6h || '';
         document.getElementById('package12h').value = config.package12h || '';
         document.getElementById('package24h').value = config.package24h || '';
+        document.getElementById('numberOfRooms').value = config.numberOfRooms || '3';
+        document.getElementById('roomCapacity').value = config.roomCapacity || '3 persons per room';
+        document.getElementById('exchangeRate').value = config.exchangeRate || '303';
         document.getElementById('facebookPixel').value = config.facebookPixel || '';
         document.getElementById('googleAds').value = config.googleAds || '';
         
@@ -117,10 +120,14 @@ async function handleSave(e) {
         email: document.getElementById('email').value,
         address: document.getElementById('address').value,
         facebook: document.getElementById('facebook').value,
+        whatsapp: document.getElementById('whatsapp').value,
         googleMap: document.getElementById('googleMap').value,
         package6h: document.getElementById('package6h').value,
         package12h: document.getElementById('package12h').value,
         package24h: document.getElementById('package24h').value,
+        numberOfRooms: document.getElementById('numberOfRooms').value,
+        roomCapacity: document.getElementById('roomCapacity').value,
+        exchangeRate: document.getElementById('exchangeRate').value,
         facebookPixel: document.getElementById('facebookPixel').value,
         googleAds: document.getElementById('googleAds').value
     };
@@ -237,10 +244,14 @@ function saveDraft() {
         email: document.getElementById('email').value,
         address: document.getElementById('address').value,
         facebook: document.getElementById('facebook').value,
+        whatsapp: document.getElementById('whatsapp').value,
         googleMap: document.getElementById('googleMap').value,
         package6h: document.getElementById('package6h').value,
         package12h: document.getElementById('package12h').value,
         package24h: document.getElementById('package24h').value,
+        numberOfRooms: document.getElementById('numberOfRooms').value,
+        roomCapacity: document.getElementById('roomCapacity').value,
+        exchangeRate: document.getElementById('exchangeRate').value,
         facebookPixel: document.getElementById('facebookPixel').value,
         googleAds: document.getElementById('googleAds').value
     };

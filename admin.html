@@ -72,6 +72,7 @@
         input[type="text"],
         input[type="email"],
         input[type="password"],
+        input[type="number"],
         textarea {
             width: 100%;
             padding: 12px 15px;
@@ -296,20 +297,28 @@
             </div>
 
             <!-- Package Pricing -->
-            <h2>Package Pricing</h2>
+            <h2>Package Pricing (LKR)</h2>
             <div class="form-group">
-                <label for="package6h">6 Hour Package (Short Time)</label>
-                <input type="text" id="package6h" name="package6h" placeholder="3500 Rs (Short time with AC - 6 hours)" required>
+                <label for="package6h">6 Hour Package (LKR only - no currency symbol)</label>
+                <input type="text" id="package6h" name="package6h" placeholder="3500" required>
             </div>
 
             <div class="form-group">
-                <label for="package12h">12 Hour Package (Full Night/Day)</label>
-                <input type="text" id="package12h" name="package12h" placeholder="5000 Rs (Full night/day with AC - 12 hours)" required>
+                <label for="package12h">12 Hour Package (LKR only - no currency symbol)</label>
+                <input type="text" id="package12h" name="package12h" placeholder="5000" required>
             </div>
 
             <div class="form-group">
-                <label for="package24h">24 Hour Package (Full Day)</label>
-                <input type="text" id="package24h" name="package24h" placeholder="8000 Rs (Full day with AC - 24 hours)" required>
+                <label for="package24h">24 Hour Package (LKR only - no currency symbol)</label>
+                <input type="text" id="package24h" name="package24h" placeholder="8000" required>
+            </div>
+
+            <!-- Exchange Rate -->
+            <h2>Currency Exchange Rate</h2>
+            <div class="form-group">
+                <label for="exchangeRate">USD to LKR Exchange Rate</label>
+                <input type="number" id="exchangeRate" name="exchangeRate" placeholder="303" value="303" step="0.01" required>
+                <small style="color: #666; display: block; margin-top: 5px;">Current rate: 1 USD = ? LKR (Update weekly for accurate conversions)</small>
             </div>
 
             <!-- Marketing Codes -->
