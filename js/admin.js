@@ -1,8 +1,8 @@
 // Admin Panel Configuration
-const ADMIN_PASSWORD = "Admin@12345"; // Change this before deployment!
+const ADMIN_PASSWORD = "LakeNest@2025!Resort#Secure"; // Change this before deployment!
 
-// GitHub Configuration - IMPORTANT: Add your token here locally (DO NOT commit to public repo)
-const GITHUB_TOKEN = "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"; // Paste your GitHub token here (keep private!)
+// GitHub Configuration - ADD YOUR TOKEN HERE
+const GITHUB_TOKEN = "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"; // Paste your GitHub Personal Access Token here
 const GITHUB_USERNAME = "isuranga2002";
 const GITHUB_REPO = "lake-nest-resort";
 const GITHUB_BRANCH = "main";
@@ -48,7 +48,6 @@ function handleLogin(e) {
     e.preventDefault();
     
     const password = document.getElementById('password').value;
-    const messageDiv = document.getElementById('login-message');
     
     if (password === ADMIN_PASSWORD) {
         sessionStorage.setItem('adminLoggedIn', 'true');
@@ -80,7 +79,8 @@ function handleLogout() {
 
 async function loadConfigData() {
     try {
-        const response = await fetch('config.json');
+        // Add timestamp to prevent caching
+        const response = await fetch('config.json?t=' + new Date().getTime());
         const config = await response.json();
         
         // Populate form fields
@@ -93,12 +93,11 @@ async function loadConfigData() {
         document.getElementById('facebook').value = config.facebook || '';
         document.getElementById('whatsapp').value = config.whatsapp || '';
         document.getElementById('googleMap').value = config.googleMap || '';
+        document.getElementById('numberOfRooms').value = config.numberOfRooms || '3';
+        document.getElementById('roomCapacity').value = config.roomCapacity || '3 persons per room';
         document.getElementById('package6h').value = config.package6h || '';
         document.getElementById('package12h').value = config.package12h || '';
         document.getElementById('package24h').value = config.package24h || '';
-        document.getElementById('numberOfRooms').value = config.numberOfRooms || '3';
-        document.getElementById('roomCapacity').value = config.roomCapacity || '3 persons per room';
-        document.getElementById('exchangeRate').value = config.exchangeRate || '303';
         document.getElementById('facebookPixel').value = config.facebookPixel || '';
         document.getElementById('googleAds').value = config.googleAds || '';
         
@@ -111,6 +110,12 @@ async function loadConfigData() {
 async function handleSave(e) {
     e.preventDefault();
     
+    // Check if GitHub token is configured
+    if (!GITHUB_TOKEN || GITHUB_TOKEN.trim() === '') {
+        showMessage('admin-message', 'ERROR: GitHub token not configured! Please add your token at the top of admin.js file.', 'error');
+        return;
+    }
+    
     // Collect form data
     const formData = {
         villaName: document.getElementById('villaName').value,
@@ -122,12 +127,11 @@ async function handleSave(e) {
         facebook: document.getElementById('facebook').value,
         whatsapp: document.getElementById('whatsapp').value,
         googleMap: document.getElementById('googleMap').value,
+        numberOfRooms: document.getElementById('numberOfRooms').value,
+        roomCapacity: document.getElementById('roomCapacity').value,
         package6h: document.getElementById('package6h').value,
         package12h: document.getElementById('package12h').value,
         package24h: document.getElementById('package24h').value,
-        numberOfRooms: document.getElementById('numberOfRooms').value,
-        roomCapacity: document.getElementById('roomCapacity').value,
-        exchangeRate: document.getElementById('exchangeRate').value,
         facebookPixel: document.getElementById('facebookPixel').value,
         googleAds: document.getElementById('googleAds').value
     };
@@ -135,89 +139,84 @@ async function handleSave(e) {
     // Convert to JSON
     const configJSON = JSON.stringify(formData, null, 2);
     
-    // Check if GitHub token is configured
-    if (!GITHUB_TOKEN || GITHUB_TOKEN.trim() === '') {
-        // Fallback: Download config.json locally
-        showMessage('admin-message', 'GitHub token not configured. Downloading config.json file instead. Please upload it to your repository manually.', 'error');
-        downloadConfigFile(configJSON);
-        return;
-    }
+    // Show saving message
+    showMessage('admin-message', '⏳ Saving changes to GitHub... Please wait.', 'success');
     
     // Try to save to GitHub
     try {
-        showMessage('admin-message', 'Saving changes to GitHub...', 'success');
         await saveToGitHub(configJSON);
-        showMessage('admin-message', 'Changes saved successfully! Your website will update in 30-60 seconds.', 'success');
+        showMessage('admin-message', '✅ SUCCESS! Changes saved to GitHub. Your website will update automatically in 30-60 seconds. Refresh your website to see changes.', 'success');
     } catch (error) {
         console.error('Error saving to GitHub:', error);
-        showMessage('admin-message', 'Error saving to GitHub: ' + error.message + '. Downloading config.json instead.', 'error');
-        downloadConfigFile(configJSON);
+        showMessage('admin-message', '❌ ERROR: ' + error.message + ' - Please check your GitHub token and try again.', 'error');
     }
 }
 
 async function saveToGitHub(content) {
-    // Get current file SHA
-    const getUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/config.json`;
-    
-    let sha = null;
     try {
+        // Step 1: Get current file SHA
+        const getUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/config.json`;
+        
+        console.log('Fetching current file...');
         const getResponse = await fetch(getUrl, {
             headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
                 'Accept': 'application/vnd.github.v3+json'
             }
         });
         
-        if (getResponse.ok) {
-            const data = await getResponse.json();
-            sha = data.sha;
+        if (!getResponse.ok) {
+            const errorData = await getResponse.json();
+            throw new Error(`Failed to fetch current file: ${errorData.message || getResponse.statusText}`);
         }
+        
+        const currentFile = await getResponse.json();
+        const sha = currentFile.sha;
+        
+        console.log('Current SHA:', sha);
+        
+        // Step 2: Update the file
+        const updateUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/config.json`;
+        const updateData = {
+            message: 'Updated config.json from Admin Panel - ' + new Date().toLocaleString(),
+            content: btoa(unescape(encodeURIComponent(content))), // Base64 encode with UTF-8 support
+            sha: sha,
+            branch: GITHUB_BRANCH
+        };
+        
+        console.log('Updating file...');
+        const updateResponse = await fetch(updateUrl, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updateData)
+        });
+        
+        if (!updateResponse.ok) {
+            const errorData = await updateResponse.json();
+            
+            // Check for specific errors
+            if (errorData.message && errorData.message.includes('Bad credentials')) {
+                throw new Error('Invalid GitHub token. Please check your token and make sure it has "repo" permissions.');
+            } else if (errorData.message && errorData.message.includes('Not Found')) {
+                throw new Error('Repository not found. Please check GITHUB_USERNAME and GITHUB_REPO in admin.js');
+            } else {
+                throw new Error(errorData.message || 'Failed to update GitHub repository');
+            }
+        }
+        
+        const result = await updateResponse.json();
+        console.log('Update successful:', result);
+        
+        return result;
+        
     } catch (error) {
-        console.log('File might not exist yet, will create new file');
+        console.error('GitHub API Error:', error);
+        throw error;
     }
-    
-    // Prepare update request
-    const updateUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/config.json`;
-    const updateData = {
-        message: 'Updated config.json from Admin Panel',
-        content: btoa(unescape(encodeURIComponent(content))), // Base64 encode with UTF-8 support
-        branch: GITHUB_BRANCH
-    };
-    
-    if (sha) {
-        updateData.sha = sha;
-    }
-    
-    const updateResponse = await fetch(updateUrl, {
-        method: 'PUT',
-        headers: {
-            'Authorization': `token ${GITHUB_TOKEN}`,
-            'Accept': 'application/vnd.github.v3+json',
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(updateData)
-    });
-    
-    if (!updateResponse.ok) {
-        const errorData = await updateResponse.json();
-        throw new Error(errorData.message || 'Failed to update GitHub repository');
-    }
-    
-    return await updateResponse.json();
-}
-
-function downloadConfigFile(content) {
-    const blob = new Blob([content], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'config.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
-    showMessage('admin-message', 'config.json downloaded! Please upload it to your GitHub repository to update the website.', 'success');
 }
 
 function showMessage(elementId, message, type) {
@@ -226,16 +225,18 @@ function showMessage(elementId, message, type) {
     messageDiv.className = 'message ' + type;
     messageDiv.style.display = 'block';
     
-    // Auto-hide success messages after 5 seconds
+    // Auto-hide success messages after 10 seconds
     if (type === 'success') {
         setTimeout(() => {
             messageDiv.style.display = 'none';
-        }, 5000);
+        }, 10000);
     }
 }
 
 // Auto-save draft to local storage (optional feature)
 function saveDraft() {
+    if (!isLoggedIn) return;
+    
     const formData = {
         villaName: document.getElementById('villaName').value,
         description: document.getElementById('description').value,
@@ -246,31 +247,17 @@ function saveDraft() {
         facebook: document.getElementById('facebook').value,
         whatsapp: document.getElementById('whatsapp').value,
         googleMap: document.getElementById('googleMap').value,
+        numberOfRooms: document.getElementById('numberOfRooms').value,
+        roomCapacity: document.getElementById('roomCapacity').value,
         package6h: document.getElementById('package6h').value,
         package12h: document.getElementById('package12h').value,
         package24h: document.getElementById('package24h').value,
-        numberOfRooms: document.getElementById('numberOfRooms').value,
-        roomCapacity: document.getElementById('roomCapacity').value,
-        exchangeRate: document.getElementById('exchangeRate').value,
         facebookPixel: document.getElementById('facebookPixel').value,
         googleAds: document.getElementById('googleAds').value
     };
     
     localStorage.setItem('adminDraft', JSON.stringify(formData));
-}
-
-// Load draft from local storage
-function loadDraft() {
-    const draft = localStorage.getItem('adminDraft');
-    if (draft) {
-        const formData = JSON.parse(draft);
-        Object.keys(formData).forEach(key => {
-            const element = document.getElementById(key);
-            if (element) {
-                element.value = formData[key];
-            }
-        });
-    }
+    console.log('Draft auto-saved');
 }
 
 // Auto-save every 30 seconds
