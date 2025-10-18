@@ -1,0 +1,21 @@
+User-agent: *
+Allow: /
+
+# Disallow admin panel and config from search engines
+Disallow: /admin.html
+Disallow: /admin.js
+Disallow: /js/admin.js
+
+# Allow CSS and JS for proper rendering
+Allow: /css/
+Allow: /js/main.js
+
+# Sitemap location
+Sitemap: https://lakenestresort.com/sitemap.xml
+
+# Common crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
